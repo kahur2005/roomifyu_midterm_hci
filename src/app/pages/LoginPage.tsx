@@ -7,8 +7,6 @@ import { Label } from '../components/ui/label';
 import { Separator } from '../components/ui/separator';
 import { GraduationCap } from 'lucide-react';
 
-const loginBuildingImage = new URL('../images/login_building.jpeg', import.meta.url).href;
-
 export function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('sarah.johnson@university.edu');
@@ -38,7 +36,7 @@ export function LoginPage() {
             <p className="text-xl text-muted-foreground">Sampoerna University Room Booking System</p>
           </div>
           <img
-            src="/src/images/login_building.jpeg"
+            src="https://res.cloudinary.com/dcmdkdwlw/image/upload/q_auto/f_auto/v1777399374/login_building_dnkzmg.jpg"
             alt="University Campus"
             className="rounded-2xl shadow-2xl max-w-md w-full"
           />
