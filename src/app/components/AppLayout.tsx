@@ -90,7 +90,7 @@ export function AppLayout() {
   };
 
   const handleProfileClick = () => {
-    navigate('/profile');
+    navigate('/app/profile');
   };
 
   const userNavItems: NavItem[] = [
@@ -192,7 +192,7 @@ export function AppLayout() {
             </Sheet>
 
             {/* Logo */}
-            <h1 className="text-xl font-bold text-primary cursor-pointer" onClick={() => navigate('/dashboard')}>
+            <h1 className="text-xl font-bold text-primary cursor-pointer" onClick={() => navigate('/app/dashboard')}>
               RoomifyU
             </h1>
           </div>

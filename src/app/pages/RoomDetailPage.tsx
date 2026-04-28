@@ -35,7 +35,7 @@ export function RoomDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <h2 className="text-2xl font-bold mb-4">Room not found</h2>
-        <Button onClick={() => navigate('/rooms')}>Back to Rooms</Button>
+        <Button onClick={() => navigate('/app/rooms')}>Back to Rooms</Button>
       </div>
     );
   }
@@ -66,7 +66,7 @@ export function RoomDetailPage() {
     setSelectedEquipment([]);
     setIsRecurring(false);
     setNotes('');
-    navigate('/bookings');
+    navigate('/app/bookings');
   };
 
   const renderBookingStep = () => {
@@ -243,7 +243,7 @@ export function RoomDetailPage() {
   return (
     <div className="space-y-6">
       {/* Back Button */}
-      <Button variant="ghost" onClick={() => navigate('/rooms')}>
+      <Button variant="ghost" onClick={() => navigate('/app/rooms')}>
         <ArrowLeft className="h-4 w-4 mr-2" />
         Back to Rooms
       </Button>

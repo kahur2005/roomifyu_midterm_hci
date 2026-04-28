@@ -15,6 +15,10 @@ import { AnalyticsPage } from './pages/AnalyticsPage';
 
 export const router = createBrowserRouter([
   {
+    path: '/',
+    element: <Navigate to="/login" replace />,
+  },
+  {
     path: '/login',
     element: <LoginPage />,
   },
@@ -23,7 +27,7 @@ export const router = createBrowserRouter([
     element: <ForgotPasswordPage />,
   },
   {
-    path: '/',
+    path: '/app',
     element: <AppLayout />,
     children: [
       {
@@ -68,7 +72,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '*',
-        element: <Navigate to="/dashboard" replace />,
+        element: <Navigate to="/app/dashboard" replace />,
       },
     ],
   },

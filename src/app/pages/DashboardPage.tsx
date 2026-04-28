@@ -69,7 +69,7 @@ export function DashboardPage() {
             </p>
           </div>
         </div>
-        <Button size="lg" onClick={() => navigate('/rooms')}>
+        <Button size="lg" onClick={() => navigate('/app/rooms')}>
           Quick Book Room
         </Button>
       </div>
@@ -98,7 +98,7 @@ export function DashboardPage() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold">Upcoming Bookings</h2>
-          <Button variant="outline" onClick={() => navigate('/bookings')}>
+          <Button variant="outline" onClick={() => navigate('/app/bookings')}>
             View All
           </Button>
         </div>
@@ -111,7 +111,7 @@ export function DashboardPage() {
               <p className="text-muted-foreground text-center mb-4">
                 You don't have any room bookings scheduled yet.
               </p>
-              <Button onClick={() => navigate('/rooms')}>
+              <Button onClick={() => navigate('/app/rooms')}>
                 Book a Room
               </Button>
             </CardContent>
@@ -122,7 +122,7 @@ export function DashboardPage() {
               <BookingCard
                 key={booking.id}
                 booking={booking}
-                onView={() => navigate('/bookings')}
+                onView={() => navigate('/app/bookings')}
               />
             ))}
           </div>
@@ -139,7 +139,7 @@ export function DashboardPage() {
             <Button
               variant="outline"
               className="h-auto py-4 flex-col gap-2"
-              onClick={() => navigate('/rooms')}
+              onClick={() => navigate('/app/rooms')}
             >
               <Home className="h-6 w-6" />
               <span>Find Rooms</span>
@@ -147,7 +147,7 @@ export function DashboardPage() {
             <Button
               variant="outline"
               className="h-auto py-4 flex-col gap-2"
-              onClick={() => navigate('/bookings')}
+              onClick={() => navigate('/app/bookings')}
             >
               <Calendar className="h-6 w-6" />
               <span>My Bookings</span>
@@ -155,7 +155,7 @@ export function DashboardPage() {
             <Button
               variant="outline"
               className="h-auto py-4 flex-col gap-2"
-              onClick={() => navigate('/profile')}
+              onClick={() => navigate('/app/profile')}
             >
               <CheckCircle className="h-6 w-6" />
               <span>Settings</span>
