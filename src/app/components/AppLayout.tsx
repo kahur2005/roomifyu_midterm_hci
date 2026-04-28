@@ -76,7 +76,8 @@ export function AppLayout() {
   };
 
   const handleLogout = () => {
-    // Clear any session data or authentication tokens here
+    // Clear authentication state
+    localStorage.removeItem('isLoggedIn');
     localStorage.clear();
     sessionStorage.clear();
 
@@ -94,16 +95,16 @@ export function AppLayout() {
   };
 
   const userNavItems: NavItem[] = [
-    { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/dashboard' },
-    { label: 'Find Rooms', icon: <Search className="h-5 w-5" />, path: '/rooms' },
-    { label: 'My Bookings', icon: <Calendar className="h-5 w-5" />, path: '/bookings' },
+    { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/app/dashboard' },
+    { label: 'Find Rooms', icon: <Search className="h-5 w-5" />, path: '/app/rooms' },
+    { label: 'My Bookings', icon: <Calendar className="h-5 w-5" />, path: '/app/bookings' },
   ];
 
   const adminNavItems: NavItem[] = [
-    { label: 'Admin Dashboard', icon: <Shield className="h-5 w-5" />, path: '/admin', roles: ['admin'] },
-    { label: 'Approvals', icon: <CheckSquare className="h-5 w-5" />, path: '/admin/approvals', roles: ['admin'] },
-    { label: 'Room Management', icon: <Home className="h-5 w-5" />, path: '/admin/rooms', roles: ['admin'] },
-    { label: 'Analytics', icon: <BarChart3 className="h-5 w-5" />, path: '/admin/analytics', roles: ['admin'] },
+    { label: 'Admin Dashboard', icon: <Shield className="h-5 w-5" />, path: '/app/admin', roles: ['admin'] },
+    { label: 'Approvals', icon: <CheckSquare className="h-5 w-5" />, path: '/app/admin/approvals', roles: ['admin'] },
+    { label: 'Room Management', icon: <Home className="h-5 w-5" />, path: '/app/admin/rooms', roles: ['admin'] },
+    { label: 'Analytics', icon: <BarChart3 className="h-5 w-5" />, path: '/app/admin/analytics', roles: ['admin'] },
   ];
 
   const allNavItems = currentUser.role === 'admin' 
@@ -144,7 +145,7 @@ export function AppLayout() {
             onItemClick?.();
           }}
           className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors whitespace-nowrap ${
-            location.pathname === '/profile'
+            location.pathname === '/app/profile'
               ? 'bg-primary text-primary-foreground'
               : 'text-foreground hover:bg-muted'
           }`}

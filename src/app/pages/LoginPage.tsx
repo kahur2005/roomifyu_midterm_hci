@@ -14,12 +14,15 @@ export function LoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    // Mock login - set authentication state
+    localStorage.setItem('isLoggedIn', 'true');
     // Mock login - redirect to dashboard
     navigate('/app/dashboard');
   };
 
   const handleSSOLogin = () => {
-    // Mock SSO login
+    // Mock SSO login - set authentication state
+    localStorage.setItem('isLoggedIn', 'true');
     navigate('/app/dashboard');
   };
 

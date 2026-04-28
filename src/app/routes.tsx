@@ -28,7 +28,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/app',
-    element: <AppLayout />,
+    element: localStorage.getItem('isLoggedIn') === 'true' ? <AppLayout /> : <Navigate to="/login" replace />,
     children: [
       {
         index: true,
