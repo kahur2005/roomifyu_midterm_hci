@@ -5,7 +5,6 @@ import { StatusBadge } from './StatusBadge';
 import { Room } from '../data/mockData';
 import { MapPin, Users, Star } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import { ImageWithFallback } from './figma/ImageWithFallback';
 
 interface RoomCardProps {
   room: Room;
@@ -19,7 +18,7 @@ export function RoomCard({ room, onFavorite, isFavorite = false }: RoomCardProps
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative h-48 overflow-hidden">
-        <ImageWithFallback
+        <img
           src={room.image}
           alt={room.name}
           className="w-full h-full object-cover"

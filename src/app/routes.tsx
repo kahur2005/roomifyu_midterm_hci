@@ -1,4 +1,5 @@
-import { createBrowserRouter } from 'react-router';
+import React from 'react';
+import { createBrowserRouter, Navigate } from 'react-router';
 import { AppLayout } from './components/AppLayout';
 import { LoginPage } from './pages/LoginPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
@@ -65,6 +66,14 @@ export const router = createBrowserRouter([
         path: 'admin/analytics',
         element: <AnalyticsPage />,
       },
+      {
+        path: '*',
+        element: <Navigate to="/dashboard" replace />,
+      },
     ],
+  },
+  {
+    path: '*',
+    element: <Navigate to="/login" replace />,
   },
 ]);

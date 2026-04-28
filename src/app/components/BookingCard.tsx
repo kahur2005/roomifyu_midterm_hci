@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader } from './ui/card';
 import { Button } from './ui/button';
 import { StatusBadge } from './StatusBadge';
 import { Booking } from '../data/mockData';
-import { Calendar, Clock, MapPin, Users, MoreVertical, Tag } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, MoreVertical } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,32 +17,6 @@ interface BookingCardProps {
   onEdit?: (booking: Booking) => void;
   onCancel?: (booking: Booking) => void;
 }
-
-const getPurposeTypeLabel = (type: 'personal' | 'university' | 'committee') => {
-  switch (type) {
-    case 'personal':
-      return 'Personal Use';
-    case 'university':
-      return 'University Purposes';
-    case 'committee':
-      return 'Committee Purposes';
-    default:
-      return type;
-  }
-};
-
-const getPurposeTypeColor = (type: 'personal' | 'university' | 'committee') => {
-  switch (type) {
-    case 'personal':
-      return 'bg-blue-100 text-blue-700 border-blue-200';
-    case 'university':
-      return 'bg-purple-100 text-purple-700 border-purple-200';
-    case 'committee':
-      return 'bg-orange-100 text-orange-700 border-orange-200';
-    default:
-      return 'bg-gray-100 text-gray-700 border-gray-200';
-  }
-};
 
 export function BookingCard({ booking, onView, onEdit, onCancel }: BookingCardProps) {
   return (
@@ -109,12 +83,6 @@ export function BookingCard({ booking, onView, onEdit, onCancel }: BookingCardPr
         <div className="pt-2 border-t">
           <p className="text-sm font-medium mb-1">Purpose:</p>
           <p className="text-sm text-muted-foreground">{booking.purpose}</p>
-          <div className="flex items-center gap-2 mt-2">
-            <Tag className="h-4 w-4 text-muted-foreground" />
-            <span className={`px-2 py-1 rounded text-xs font-medium border ${getPurposeTypeColor(booking.bookingPurposeType)}`}>
-              {getPurposeTypeLabel(booking.bookingPurposeType)}
-            </span>
-          </div>
         </div>
       </CardContent>
     </Card>

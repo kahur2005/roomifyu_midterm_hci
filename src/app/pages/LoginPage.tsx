@@ -7,10 +7,12 @@ import { Label } from '../components/ui/label';
 import { Separator } from '../components/ui/separator';
 import { GraduationCap } from 'lucide-react';
 
+const loginBuildingImage = new URL('../images/login_building.jpeg', import.meta.url).href;
+
 export function LoginPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('sarah.johnson@university.edu');
+  const [password, setPassword] = useState('Password123!');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,10 +35,10 @@ export function LoginPage() {
               <GraduationCap className="h-10 w-10 text-primary" />
             </div>
             <h1 className="text-4xl font-bold text-primary mb-2">RoomifyU</h1>
-            <p className="text-xl text-muted-foreground">University Room Booking System</p>
+            <p className="text-xl text-muted-foreground">Sampoerna University Room Booking System</p>
           </div>
           <img
-            src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&q=80"
+            src="/src/images/login_building.jpeg"
             alt="University Campus"
             className="rounded-2xl shadow-2xl max-w-md w-full"
           />
@@ -46,7 +48,7 @@ export function LoginPage() {
         <div className="flex items-center justify-center">
           <Card className="w-full max-w-md">
             <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl">Welcome back</CardTitle>
+              <CardTitle className="text-2xl">Welcome back!</CardTitle>
               <CardDescription>
                 Sign in to your account to manage room bookings
               </CardDescription>
@@ -59,7 +61,7 @@ export function LoginPage() {
                 onClick={handleSSOLogin}
               >
                 <GraduationCap className="mr-2 h-5 w-5" />
-                Sign in with University SSO
+                Sign in with Sampoerna University SSO
               </Button>
 
               <div className="relative">
@@ -74,7 +76,7 @@ export function LoginPage() {
               </div>
 
               {/* Email Login Form */}
-              <form onSubmit={handleLogin} className="space-y-4">
+              <form onSubmit={handleLogin} className="space-y-4 rounded-lg border bg-muted/30 p-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -83,6 +85,7 @@ export function LoginPage() {
                     placeholder="student@university.edu"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    className="h-11 border-border bg-background shadow-sm"
                     required
                   />
                 </div>
@@ -101,19 +104,24 @@ export function LoginPage() {
                   <Input
                     id="password"
                     type="password"
+                    placeholder="*********"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    className="h-11 border-border bg-background shadow-sm"
                     required
                   />
                 </div>
                 <Button type="submit" className="w-full">
                   Sign In
                 </Button>
+                <p className="text-xs text-muted-foreground">
+                  Example credentials are prefilled for demo login.
+                </p>
               </form>
 
               <p className="text-center text-sm text-muted-foreground">
                 Need help?{' '}
-                <a href="#" className="text-primary hover:underline">
+                <a href="https://wa.me/6281770880171" className="text-primary hover:underline">
                   Contact IT Support
                 </a>
               </p>

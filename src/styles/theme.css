@@ -178,4 +178,19 @@
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
   }
+
+  /* Resizable Panel Styles */
+  [data-panel-resize-handle-enabled] {
+    cursor: col-resize;
+  }
+
+  [data-panel-resize-handle-enabled]:hover {
+    background: var(--color-primary);
+    opacity: 0.5;
+  }
+
+  [data-panel-resize-handle-enabled]:active {
+    background: var(--color-primary);
+    opacity: 0.8;
+  }
 }

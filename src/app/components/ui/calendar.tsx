@@ -60,12 +60,12 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: React.forwardRef<SVGSVGElement, React.ComponentProps<typeof ChevronLeft>>(({ className, ...props }, ref) => (
-          <ChevronLeft ref={ref} className={cn("size-4", className)} {...props} />
-        )),
-        IconRight: React.forwardRef<SVGSVGElement, React.ComponentProps<typeof ChevronRight>>(({ className, ...props }, ref) => (
-          <ChevronRight ref={ref} className={cn("size-4", className)} {...props} />
-        )),
+        IconLeft: ({ className, ...props }) => (
+          <ChevronLeft className={cn("size-4", className)} {...props} />
+        ),
+        IconRight: ({ className, ...props }) => (
+          <ChevronRight className={cn("size-4", className)} {...props} />
+        ),
       }}
       {...props}
     />

@@ -202,26 +202,22 @@ export function AnalyticsPage() {
             <CardTitle>Peak Hours Analysis</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={analyticsData.utilizationByHour}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="hour" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="utilization"
-                    stroke="#22C55E"
-                    strokeWidth={2}
-                    name="Utilization %"
-                    dot={{ fill: '#22C55E', r: 4 }}
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={analyticsData.utilizationByHour}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="hour" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="utilization"
+                  stroke="hsl(var(--accent))"
+                  strokeWidth={2}
+                  name="Utilization %"
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 

@@ -5,8 +5,6 @@ import { Avatar, AvatarFallback } from './ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import {
@@ -17,15 +15,23 @@ import {
   Settings,
   LogOut,
   Menu,
-  X,
   Shield,
   BarChart3,
   CheckSquare,
-  Home
+  Home,
+  GripVertical
 } from 'lucide-react';
-import { currentUser, notifications } from '../data/mockData';
+import { currentUser, notifications, Notification } from '../data/mockData';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import { MobileNav } from './MobileNav';
+import { toast } from 'sonner';
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from './ui/tooltip';
 
 interface NavItem {
   label: string;
@@ -39,6 +45,53 @@ export function AppLayout() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const [notificationItems, setNotificationItems] = useState<Notification[]>(notifications);
+
+  const getNotificationLink = (notification: Notification) => {
+    if (notification.link) {
+      return notification.link;
+    }
+
+    switch (notification.type) {
+      case 'approval':
+        return currentUser.role === 'admin' ? '/admin/approvals' : '/bookings';
+      case 'reminder':
+      case 'booking':
+      case 'cancellation':
+        return '/bookings';
+      default:
+        return '/dashboard';
+    }
+  };
+
+  const handleNotificationClick = (notification: Notification) => {
+    setNotificationOpen(false);
+    setNotificationItems((prev) =>
+      prev.map((item) =>
+        item.id === notification.id ? { ...item, read: true } : item
+      )
+    );
+    const link = getNotificationLink(notification);
+    navigate(link);
+  };
+
+  const handleLogout = () => {
+    // Clear any session data or authentication tokens here
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Show success message
+    toast.success('Logged out successfully', {
+      description: 'You have been logged out of your account.',
+    });
+
+    // Navigate to login page
+    navigate('/login', { replace: true });
+  };
+
+  const handleProfileClick = () => {
+    navigate('/profile');
+  };
 
   const userNavItems: NavItem[] = [
     { label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" />, path: '/dashboard' },
@@ -57,37 +110,68 @@ export function AppLayout() {
     ? [...userNavItems, ...adminNavItems]
     : userNavItems;
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notificationItems.filter(n => !n.read).length;
 
   const NavLinks = ({ onItemClick }: { onItemClick?: () => void }) => (
-    <nav className="space-y-1">
-      {allNavItems.map((item) => {
-        const isActive = location.pathname === item.path;
-        return (
-          <button
-            key={item.path}
-            onClick={() => {
-              navigate(item.path);
-              onItemClick?.();
-            }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-              isActive
-                ? 'bg-primary text-primary-foreground'
-                : 'text-foreground hover:bg-muted'
-            }`}
-          >
-            {item.icon}
-            <span>{item.label}</span>
-          </button>
-        );
-      })}
-    </nav>
+    <div className="space-y-4">
+      <nav className="space-y-1">
+        {allNavItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <button
+              key={item.path}
+              onClick={() => {
+                navigate(item.path);
+                onItemClick?.();
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors whitespace-nowrap ${
+                isActive
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-foreground hover:bg-muted'
+              }`}
+            >
+              {item.icon}
+              <span className="truncate">{item.label}</span>
+            </button>
+          );
+        })}
+      </nav>
+
+      <div className="border-t pt-3 space-y-1">
+        <button
+          onClick={() => {
+            handleProfileClick();
+            onItemClick?.();
+          }}
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors whitespace-nowrap ${
+            location.pathname === '/profile'
+              ? 'bg-primary text-primary-foreground'
+              : 'text-foreground hover:bg-muted'
+          }`}
+        >
+          <Settings className="h-5 w-5" />
+          <span className="truncate">Profile & Settings</span>
+        </button>
+
+        <button
+          onClick={() => {
+            handleLogout();
+            onItemClick?.();
+          }}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors whitespace-nowrap text-destructive hover:bg-destructive/10"
+        >
+          <LogOut className="h-5 w-5" />
+          <span className="truncate">Logout</span>
+        </button>
+      </div>
+    </div>
   );
 
   return (
-    <div className="min-h-screen bg-background pb-16 md:pb-0">
-      {/* Top Navigation */}
-      <header className="sticky top-0 z-40 border-b bg-card">
+    <TooltipProvider>
+      <div className="min-h-screen bg-background pb-16 md:pb-0">
+        {/* Top Navigation */}
+        <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 isolate">
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-4">
             {/* Mobile Menu */}
@@ -114,7 +198,7 @@ export function AppLayout() {
           </div>
 
           {/* Right side */}
-          <div className="flex items-center gap-2">
+          <div className="relative z-10 flex items-center gap-2">
             {/* Notifications */}
             <DropdownMenu open={notificationOpen} onOpenChange={setNotificationOpen}>
               <DropdownMenuTrigger asChild>
@@ -132,15 +216,24 @@ export function AppLayout() {
                   <h3 className="font-semibold">Notifications</h3>
                 </div>
                 <div className="max-h-96 overflow-y-auto">
-                  {notifications.length === 0 ? (
+                  {notificationItems.length === 0 ? (
                     <div className="px-4 py-8 text-center text-muted-foreground">
                       <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
                       <p className="text-sm">No notifications</p>
                     </div>
                   ) : (
-                    notifications.map((notification) => (
+                    notificationItems.map((notification) => (
                       <div
                         key={notification.id}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => handleNotificationClick(notification)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            handleNotificationClick(notification);
+                          }
+                        }}
                         className={`px-4 py-3 border-b hover:bg-muted cursor-pointer ${
                           !notification.read ? 'bg-accent/5' : ''
                         }`}
@@ -162,56 +255,67 @@ export function AppLayout() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* User Menu */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="gap-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                      {currentUser.name.split(' ').map(n => n[0]).join('')}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="hidden md:inline">{currentUser.name}</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <div className="px-2 py-1.5">
-                  <p className="text-sm font-medium">{currentUser.name}</p>
-                  <p className="text-xs text-muted-foreground">{currentUser.email}</p>
-                  <p className="text-xs text-muted-foreground capitalize">{currentUser.role}</p>
-                </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/profile')}>
-                  <Settings className="mr-2 h-4 w-4" />
-                  Settings & Profile
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/login')}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button variant="ghost" className="gap-2" onClick={handleProfileClick}>
+              <Avatar className="h-8 w-8">
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  {currentUser.name.split(' ').map((n) => n[0]).join('')}
+                </AvatarFallback>
+              </Avatar>
+              <span className="hidden md:inline">{currentUser.name}</span>
+            </Button>
           </div>
         </div>
       </header>
 
-      <div className="flex">
+      <PanelGroup direction="horizontal" className="hidden md:flex">
         {/* Sidebar - Desktop */}
-        <aside className="hidden md:block w-64 border-r bg-card min-h-[calc(100vh-4rem)] sticky top-16">
-          <div className="p-4">
-            <NavLinks />
+        <Panel
+          defaultSize={20}
+          minSize={15}
+          maxSize={35}
+          className="border-r bg-card"
+        >
+          <div className="sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
+            <div className="p-4">
+              <NavLinks />
+            </div>
           </div>
-        </aside>
+        </Panel>
+
+        {/* Resize Handle */}
+        <PanelResizeHandle className="w-1.5 bg-border hover:bg-primary/50 transition-all relative group cursor-col-resize">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="absolute inset-y-0 -left-2 -right-2 flex items-center justify-center">
+                <div className="bg-background border border-border rounded-full p-1.5 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity shadow-md">
+                  <GripVertical className="h-3.5 w-3.5 text-primary" />
+                </div>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Drag to resize sidebar</p>
+            </TooltipContent>
+          </Tooltip>
+        </PanelResizeHandle>
 
         {/* Main Content */}
-        <main className="flex-1 p-4 md:p-6 lg:p-8">
+        <Panel defaultSize={80} minSize={50}>
+          <main className="p-4 md:p-6 lg:p-8 h-[calc(100vh-4rem)] overflow-y-auto">
+            <Outlet />
+          </main>
+        </Panel>
+      </PanelGroup>
+
+      {/* Mobile Layout */}
+      <div className="md:hidden">
+        <main className="p-4">
           <Outlet />
         </main>
       </div>
 
-      {/* Mobile Bottom Navigation */}
-      <MobileNav />
-    </div>
+        {/* Mobile Bottom Navigation */}
+        <MobileNav />
+      </div>
+    </TooltipProvider>
   );
 }

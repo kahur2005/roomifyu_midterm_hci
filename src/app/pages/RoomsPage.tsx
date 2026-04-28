@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RoomCard } from '../components/RoomCard';
+import { RoomCarousel } from '../components/RoomCarousel';
 import { rooms, buildings, roomTypes, allFacilities } from '../data/mockData';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -14,8 +14,14 @@ import {
   SelectValue,
 } from '../components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Search, SlidersHorizontal, X, Home } from 'lucide-react';
+import { Search, SlidersHorizontal, X, Home, ChevronDown, ChevronUp } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../components/ui/sheet';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '../components/ui/collapsible';
+import { motion } from 'motion/react';
 
 export function RoomsPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,6 +31,7 @@ export function RoomsPage() {
   const [capacityRange, setCapacityRange] = useState([0]);
   const [favoriteRooms, setFavoriteRooms] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(true);
 
   const maxCapacity = Math.max(...rooms.map(r => r.capacity));
 
@@ -110,8 +117,9 @@ export function RoomsPage() {
         <Slider
           value={capacityRange}
           onValueChange={setCapacityRange}
+          min={0}
           max={maxCapacity}
-          step={5}
+          step={1}
           className="mt-2"
         />
       </div>
@@ -171,15 +179,24 @@ export function RoomsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <h1 className="text-3xl font-bold mb-2">Find Rooms</h1>
         <p className="text-muted-foreground">
           Search and filter available rooms for your booking needs
         </p>
-      </div>
+      </motion.div>
 
       {/* Search Bar */}
-      <div className="flex gap-2">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="flex gap-2"
+      >
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -206,57 +223,100 @@ export function RoomsPage() {
             </div>
           </SheetContent>
         </Sheet>
-      </div>
+      </motion.div>
 
       <div className="flex gap-6">
-        {/* Desktop Filter Sidebar */}
-        <aside className="hidden md:block w-64 shrink-0">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <SlidersHorizontal className="h-5 w-5" />
-                Filters
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <FilterPanel />
-            </CardContent>
-          </Card>
-        </aside>
-
-        {/* Room Grid */}
-        <div className="flex-1">
-          <div className="mb-4 flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              {filteredRooms.length} {filteredRooms.length === 1 ? 'room' : 'rooms'} found
-            </p>
-          </div>
-
-          {filteredRooms.length === 0 ? (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <Home className="h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">No rooms found</h3>
-                <p className="text-muted-foreground text-center mb-4">
-                  Try adjusting your filters or search criteria
-                </p>
-                <Button variant="outline" onClick={clearFilters}>
-                  Clear Filters
-                </Button>
-              </CardContent>
+        {/* Desktop Collapsible Filter Sidebar */}
+        <Collapsible
+          open={isFilterOpen}
+          onOpenChange={setIsFilterOpen}
+          className="hidden md:block shrink-0"
+        >
+          <motion.aside
+            initial={false}
+            animate={{
+              width: isFilterOpen ? 256 : 56,
+            }}
+            transition={{
+              duration: 0.3,
+              ease: [0.32, 0.72, 0, 1],
+            }}
+            className="relative"
+          >
+            <Card className="h-fit sticky top-6">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className={`flex items-center gap-2 transition-opacity ${isFilterOpen ? 'opacity-100' : 'opacity-0'}`}>
+                    <SlidersHorizontal className="h-5 w-5" />
+                    {isFilterOpen && 'Filters'}
+                  </CardTitle>
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="h-8 w-8 p-0"
+                      title={isFilterOpen ? 'Collapse filters' : 'Expand filters'}
+                    >
+                      <motion.div
+                        className="flex h-full w-full items-center justify-center"
+                        animate={{ rotate: isFilterOpen ? 0 : 180 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <ChevronDown className="h-4 w-4" />
+                      </motion.div>
+                    </Button>
+                  </CollapsibleTrigger>
+                </div>
+              </CardHeader>
+              <CollapsibleContent>
+                <CardContent>
+                  <FilterPanel />
+                </CardContent>
+              </CollapsibleContent>
             </Card>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredRooms.map(room => (
-                <RoomCard
-                  key={room.id}
-                  room={room}
-                  onFavorite={handleFavorite}
-                  isFavorite={favoriteRooms.includes(room.id)}
-                />
-              ))}
+          </motion.aside>
+        </Collapsible>
+
+        {/* Room Carousel */}
+        <div className="flex-1">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-6"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <p className="text-sm text-muted-foreground">
+                {filteredRooms.length} {filteredRooms.length === 1 ? 'room' : 'rooms'} found
+              </p>
             </div>
-          )}
+
+            {filteredRooms.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center py-12">
+                    <Home className="h-12 w-12 text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium mb-2">No rooms found</h3>
+                    <p className="text-muted-foreground text-center mb-4">
+                      Try adjusting your filters or search criteria
+                    </p>
+                    <Button variant="outline" onClick={clearFilters}>
+                      Clear Filters
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ) : (
+              <RoomCarousel
+                rooms={filteredRooms}
+                onFavorite={handleFavorite}
+                favoriteRooms={favoriteRooms}
+              />
+            )}
+          </motion.div>
         </div>
       </div>
     </div>
