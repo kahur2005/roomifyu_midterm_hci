@@ -35,11 +35,6 @@ export function LoginPage() {
             <h1 className="text-4xl font-bold text-primary mb-2">RoomifyU</h1>
             <p className="text-xl text-muted-foreground">Sampoerna University Room Booking System</p>
           </div>
-          <img
-            src="https://res.cloudinary.com/dcmdkdwlw/image/upload/q_auto/f_auto/v1777399374/login_building_dnkzmg.jpg"
-            alt="University Campus"
-            className="rounded-2xl shadow-2xl max-w-md w-full"
-          />
         </div>
 
         {/* Right side - Login Form */}
