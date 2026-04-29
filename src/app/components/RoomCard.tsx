@@ -82,7 +82,7 @@ export function RoomCard({ room, onFavorite, isFavorite = false }: RoomCardProps
         <Button
           className="w-full"
           variant="outline"
-          onClick={() => navigate(`/room/${room.id}`)}
+          onClick={() => navigate(`/app/room/${room.id}`)}
         >
           View Details
         </Button>

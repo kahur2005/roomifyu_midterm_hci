@@ -193,7 +193,7 @@ export function RoomCarousel({ rooms, onFavorite, favoriteRooms = [] }: RoomCaro
                     <CardFooter>
                       <Button
                         className="w-full"
-                        onClick={() => navigate(`/room/${room.id}`)}
+                        onClick={() => navigate(`/app/room/${room.id}`)}
                       >
                         View Details
                       </Button>

@@ -12,6 +12,14 @@ import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { ApprovalsPage } from './pages/ApprovalsPage';
 import { RoomManagementPage } from './pages/RoomManagementPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
+import { authService } from './utils/auth';
+
+function ProtectedAppLayout() {
+  if (!authService.isAuthenticated()) {
+    return <Navigate to="/login" replace />;
+  }
+  return <AppLayout />;
+}
 
 export const router = createBrowserRouter([
   {
@@ -28,7 +36,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/app',
-    element: localStorage.getItem('isLoggedIn') === 'true' ? <AppLayout /> : <Navigate to="/login" replace />,
+    element: <ProtectedAppLayout />,
     children: [
       {
         index: true,

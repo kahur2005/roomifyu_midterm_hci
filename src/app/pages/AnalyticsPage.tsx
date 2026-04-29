@@ -44,12 +44,17 @@ export function AnalyticsPage() {
     toast.success(`Exporting report as ${format.toUpperCase()}...`);
   };
 
+  const chartColor = '#2563EB';
+
   const utilizationData = [
     { name: 'Utilized', value: analyticsData.roomUtilization },
     { name: 'Available', value: 100 - analyticsData.roomUtilization }
   ];
 
-  const COLORS = ['hsl(var(--primary))', 'hsl(var(--muted))'];
+  const COLORS = [
+    chartColor,
+    'rgba(37, 99, 235, 0.35)',
+  ];
 
   const roomTypeData = [
     { type: 'Classroom', bookings: 450 },
@@ -169,7 +174,7 @@ export function AnalyticsPage() {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="bookings" fill="hsl(var(--primary))" name="Bookings" />
+                <Bar dataKey="bookings" fill={chartColor} name="Bookings" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -188,12 +193,12 @@ export function AnalyticsPage() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, value }) => `${name}: ${value}%`}
+                  label={({ name, value }: { name?: string; value?: number }) => `${name}: ${value}%`}
                   outerRadius={100}
-                  fill="#8884d8"
+                  fill={chartColor}
                   dataKey="value"
                 >
-                  {utilizationData.map((entry, index) => (
+                  {utilizationData.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -222,8 +227,11 @@ export function AnalyticsPage() {
                 <Line
                   type="monotone"
                   dataKey="utilization"
-                  stroke="hsl(var(--accent))"
-                  strokeWidth={2}
+                  stroke={chartColor}
+                  strokeWidth={3}
+                  dot={{ r: 4, fill: chartColor }}
+                  activeDot={{ r: 6, fill: chartColor }}
+                  connectNulls
                   name="Utilization %"
                 />
               </LineChart>
@@ -243,7 +251,7 @@ export function AnalyticsPage() {
                 <XAxis type="number" />
                 <YAxis dataKey="type" type="category" width={100} />
                 <Tooltip />
-                <Bar dataKey="bookings" fill="hsl(var(--primary))" />
+                <Bar dataKey="bookings" fill={chartColor} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

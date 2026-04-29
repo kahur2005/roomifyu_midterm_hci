@@ -27,6 +27,7 @@ import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import { MobileNav } from './MobileNav';
 import { toast } from 'sonner';
 import { Panel, PanelGroup } from 'react-resizable-panels';
+import { ThemeToggle } from './ThemeToggle';
 
 interface NavItem {
   label: string;
@@ -56,13 +57,13 @@ export function AppLayout() {
 
     switch (notification.type) {
       case 'approval':
-        return currentUser.role === 'admin' ? '/admin/approvals' : '/bookings';
+        return currentUser?.role === 'admin' ? '/app/admin/approvals' : '/app/bookings';
       case 'reminder':
       case 'booking':
       case 'cancellation':
-        return '/bookings';
+        return '/app/bookings';
       default:
-        return '/dashboard';
+        return '/app/dashboard';
     }
   };
 
@@ -194,6 +195,7 @@ export function AppLayout() {
 
           {/* Right side */}
           <div className="relative z-10 flex items-center gap-2">
+            <ThemeToggle />
             {/* Notifications */}
             <DropdownMenu open={notificationOpen} onOpenChange={setNotificationOpen}>
               <DropdownMenuTrigger asChild>

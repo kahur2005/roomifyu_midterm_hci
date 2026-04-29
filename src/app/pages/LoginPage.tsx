@@ -8,13 +8,22 @@ import { Separator } from '../components/ui/separator';
 import { GraduationCap } from 'lucide-react';
 import { toast } from 'sonner';
 import { authService } from '../utils/auth';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 export function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('arry@university.edu');
-  const [password, setPassword] = useState('admin123');
+  const [password, setPassword] = useState('12345678');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const redirectToRoleDashboard = (role: 'student' | 'lecturer' | 'admin') => {
+    if (role === 'admin') {
+      navigate('/app/admin', { replace: true });
+      return;
+    }
+    navigate('/app/dashboard', { replace: true });
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,12 +35,7 @@ export function LoginPage() {
       
       if (user) {
         toast.success(`Welcome ${user.name}!`);
-        // Redirect based on role
-        if (user.role === 'admin') {
-          navigate('/admin', { replace: true });
-        } else {
-          navigate('/dashboard', { replace: true });
-        }
+        redirectToRoleDashboard(user.role);
       } else {
         setError('Invalid email or password');
         toast.error('Login failed', {
@@ -47,12 +51,37 @@ export function LoginPage() {
   };
 
   const handleSSOLogin = () => {
-    // Mock SSO login
-    navigate('/dashboard');
+    const user = authService.login({ email: 'arry@university.edu', password: '12345678' });
+    if (!user) {
+      toast.error('SSO login failed');
+      return;
+    }
+    toast.success(`Welcome ${user.name}!`);
+    redirectToRoleDashboard(user.role);
+  };
+
+  const handleDemoLogin = (role: 'admin' | 'student' | 'lecturer') => {
+    const credentialsByRole = {
+      admin: { email: 'arry@university.edu', password: '12345678' },
+      student: { email: 'jesse@university.edu', password: '12345678' },
+      lecturer: { email: 'panji@university.edu', password: '12345678' },
+    };
+
+    const user = authService.login(credentialsByRole[role]);
+    if (!user) {
+      toast.error('Demo login failed');
+      return;
+    }
+
+    toast.success(`Welcome ${user.name}!`);
+    redirectToRoleDashboard(user.role);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <div className="fixed right-4 top-4">
+        <ThemeToggle variant="outline" />
+      </div>
       <div className="w-full max-w-6xl grid md:grid-cols-2 gap-8 items-center">
         {/* Left side - Illustration */}
         <div className="hidden md:flex flex-col items-center justify-center p-8">
@@ -148,7 +177,7 @@ export function LoginPage() {
                   {isLoading ? 'Signing in...' : 'Sign In'}
                 </Button>
                 <p className="text-xs text-muted-foreground">
-                  Demo credentials: arry@university.edu / admin123 (or similar for other roles)
+                  Demo credentials: arry@university.edu / 12345678 (same password for all roles)
                 </p>
               </form>
 
