@@ -47,29 +47,8 @@ export function LoginPage() {
   };
 
   const handleSSOLogin = () => {
-    // Mock SSO login - use admin credentials
-    const user = authService.login({
-      email: 'arry@university.edu',
-      password: 'admin123',
-    });
-    if (user) {
-      toast.success('SSO login successful');
-      navigate(user.role === 'admin' ? '/admin' : '/dashboard', { replace: true });
-    }
-  };
-
-  const handleDemoLogin = (role: 'admin' | 'student' | 'lecturer') => {
-    const credentials = {
-      admin: { email: 'arry@university.edu', password: 'admin123' },
-      student: { email: 'jesse@university.edu', password: 'student123' },
-      lecturer: { email: 'panji@university.edu', password: 'lecturer123' },
-    };
-
-    const user = authService.login(credentials[role]);
-    if (user) {
-      toast.success(`Logged in as ${user.name}`);
-      navigate(role === 'admin' ? '/admin' : '/dashboard', { replace: true });
-    }
+    // Mock SSO login
+    navigate('/dashboard');
   };
 
   return (

@@ -15,6 +15,10 @@ import { AnalyticsPage } from './pages/AnalyticsPage';
 
 export const router = createBrowserRouter([
   {
+    path: '/',
+    element: <Navigate to="/login" replace />,
+  },
+  {
     path: '/login',
     element: <LoginPage />,
   },
@@ -23,8 +27,8 @@ export const router = createBrowserRouter([
     element: <ForgotPasswordPage />,
   },
   {
-    path: '/',
-    element: <AppLayout />,
+    path: '/app',
+    element: localStorage.getItem('isLoggedIn') === 'true' ? <AppLayout /> : <Navigate to="/login" replace />,
     children: [
       {
         index: true,
@@ -68,7 +72,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '*',
-        element: <Navigate to="/dashboard" replace />,
+        element: <Navigate to="/app/dashboard" replace />,
       },
     ],
   },

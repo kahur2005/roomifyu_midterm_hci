@@ -63,7 +63,7 @@ export function AdminDashboardPage() {
             Overview of room bookings and system statistics
           </p>
         </div>
-        <Button onClick={() => navigate('/admin/approvals')}>
+        <Button onClick={() => navigate('/app/admin/approvals')}>
           View Pending Approvals
         </Button>
       </div>
@@ -142,7 +142,7 @@ export function AdminDashboardPage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Recent Booking Requests</CardTitle>
-            <Button variant="outline" onClick={() => navigate('/admin/approvals')}>
+            <Button variant="outline" onClick={() => navigate('/app/admin/approvals')}>
               View All
             </Button>
           </div>
