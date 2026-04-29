@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { BookingCard } from '../components/BookingCard';
-import { bookings, currentUser } from '../data/mockData';
+import { bookings } from '../data/mockData';
+import { authService } from '../utils/auth';
+import { useNavigate } from 'react-router';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
@@ -16,6 +18,14 @@ import {
 import { toast } from 'sonner';
 
 export function MyBookingsPage() {
+  const navigate = useNavigate();
+  const currentUser = authService.getCurrentUser();
+
+  if (!currentUser) {
+    navigate('/login', { replace: true });
+    return null;
+  }
+
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 

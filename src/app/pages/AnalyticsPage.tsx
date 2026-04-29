@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { analyticsData } from '../data/mockData';
+import { authService } from '../utils/auth';
+import { useNavigate } from 'react-router';
 import {
   BarChart,
   Bar,
@@ -28,6 +30,14 @@ import {
 import { toast } from 'sonner';
 
 export function AnalyticsPage() {
+  const navigate = useNavigate();
+  const currentUser = authService.getCurrentUser();
+
+  if (!currentUser || currentUser.role !== 'admin') {
+    navigate('/dashboard', { replace: true });
+    return null;
+  }
+
   const [dateRange, setDateRange] = useState('last-30-days');
 
   const handleExport = (format: 'csv' | 'pdf') => {

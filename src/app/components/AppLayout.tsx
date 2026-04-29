@@ -18,20 +18,15 @@ import {
   Shield,
   BarChart3,
   CheckSquare,
-  Home,
-  GripVertical
+  Home
 } from 'lucide-react';
-import { currentUser, notifications, Notification } from '../data/mockData';
+import { notifications, Notification } from '../data/mockData';
+import { authService } from '../utils/auth';
+import { useEffect } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import { MobileNav } from './MobileNav';
 import { toast } from 'sonner';
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from './ui/tooltip';
+import { Panel, PanelGroup } from 'react-resizable-panels';
 
 interface NavItem {
   label: string;
@@ -46,6 +41,13 @@ export function AppLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notificationItems, setNotificationItems] = useState<Notification[]>(notifications);
+  const currentUser = authService.getCurrentUser();
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/login', { replace: true });
+    }
+  }, [currentUser, navigate]);
 
   const getNotificationLink = (notification: Notification) => {
     if (notification.link) {
@@ -76,16 +78,10 @@ export function AppLayout() {
   };
 
   const handleLogout = () => {
-    // Clear any session data or authentication tokens here
-    localStorage.clear();
-    sessionStorage.clear();
-
-    // Show success message
+    authService.logout();
     toast.success('Logged out successfully', {
       description: 'You have been logged out of your account.',
     });
-
-    // Navigate to login page
     navigate('/login', { replace: true });
   };
 
@@ -106,7 +102,7 @@ export function AppLayout() {
     { label: 'Analytics', icon: <BarChart3 className="h-5 w-5" />, path: '/admin/analytics', roles: ['admin'] },
   ];
 
-  const allNavItems = currentUser.role === 'admin' 
+  const allNavItems = currentUser && currentUser.role === 'admin' 
     ? [...userNavItems, ...adminNavItems]
     : userNavItems;
 
@@ -168,8 +164,7 @@ export function AppLayout() {
   );
 
   return (
-    <TooltipProvider>
-      <div className="min-h-screen bg-background pb-16 md:pb-0">
+    <div className="min-h-screen bg-background pb-16 md:pb-0">
         {/* Top Navigation */}
         <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 isolate">
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
@@ -183,7 +178,7 @@ export function AppLayout() {
               </SheetTrigger>
               <SheetContent side="left" className="w-64 p-0">
                 <div className="flex h-16 items-center px-6 border-b">
-                  <h1 className="text-xl font-bold text-primary">RoomifyU</h1>
+                  <h1 className="text-xl font-bold text-primary">CampusSpace</h1>
                 </div>
                 <div className="p-4">
                   <NavLinks onItemClick={() => setMobileMenuOpen(false)} />
@@ -193,7 +188,7 @@ export function AppLayout() {
 
             {/* Logo */}
             <h1 className="text-xl font-bold text-primary cursor-pointer" onClick={() => navigate('/dashboard')}>
-              RoomifyU
+              CampusSpace
             </h1>
           </div>
 
@@ -258,10 +253,10 @@ export function AppLayout() {
             <Button variant="ghost" className="gap-2" onClick={handleProfileClick}>
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="bg-primary text-primary-foreground">
-                  {currentUser.name.split(' ').map((n) => n[0]).join('')}
+                  {currentUser?.name.split(' ').map((n) => n[0]).join('')}
                 </AvatarFallback>
               </Avatar>
-              <span className="hidden md:inline">{currentUser.name}</span>
+              <span className="hidden md:inline">{currentUser?.name}</span>
             </Button>
           </div>
         </div>
@@ -271,8 +266,6 @@ export function AppLayout() {
         {/* Sidebar - Desktop */}
         <Panel
           defaultSize={20}
-          minSize={15}
-          maxSize={35}
           className="border-r bg-card"
         >
           <div className="sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
@@ -282,24 +275,8 @@ export function AppLayout() {
           </div>
         </Panel>
 
-        {/* Resize Handle */}
-        <PanelResizeHandle className="w-1.5 bg-border hover:bg-primary/50 transition-all relative group cursor-col-resize">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="absolute inset-y-0 -left-2 -right-2 flex items-center justify-center">
-                <div className="bg-background border border-border rounded-full p-1.5 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity shadow-md">
-                  <GripVertical className="h-3.5 w-3.5 text-primary" />
-                </div>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Drag to resize sidebar</p>
-            </TooltipContent>
-          </Tooltip>
-        </PanelResizeHandle>
-
         {/* Main Content */}
-        <Panel defaultSize={80} minSize={50}>
+        <Panel defaultSize={80}>
           <main className="p-4 md:p-6 lg:p-8 h-[calc(100vh-4rem)] overflow-y-auto">
             <Outlet />
           </main>
@@ -316,6 +293,5 @@ export function AppLayout() {
         {/* Mobile Bottom Navigation */}
         <MobileNav />
       </div>
-    </TooltipProvider>
   );
 }

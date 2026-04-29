@@ -5,10 +5,18 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Calendar, Home, Clock, CheckCircle, TrendingUp } from 'lucide-react';
 import { StatusBadge } from '../components/StatusBadge';
 import { Button } from '../components/ui/button';
+import { authService } from '../utils/auth';
 import { useNavigate } from 'react-router';
 
 export function AdminDashboardPage() {
   const navigate = useNavigate();
+  const currentUser = authService.getCurrentUser();
+
+  if (!currentUser || currentUser.role !== 'admin') {
+    navigate('/dashboard', { replace: true });
+    return null;
+  }
+
   const hourlyUtilizationData = analyticsData.utilizationByHour.map((item) => ({
     ...item,
     hour: item.hour.padStart(5, '0'),

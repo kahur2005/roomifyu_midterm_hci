@@ -6,21 +6,70 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Separator } from '../components/ui/separator';
 import { GraduationCap } from 'lucide-react';
+import { toast } from 'sonner';
+import { authService } from '../utils/auth';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('sarah.johnson@university.edu');
-  const [password, setPassword] = useState('Password123!');
+  const [email, setEmail] = useState('arry@university.edu');
+  const [password, setPassword] = useState('admin123');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock login - redirect to dashboard
-    navigate('/dashboard');
+    setError('');
+    setIsLoading(true);
+
+    try {
+      const user = authService.login({ email, password });
+      
+      if (user) {
+        toast.success(`Welcome ${user.name}!`);
+        // Redirect based on role
+        if (user.role === 'admin') {
+          navigate('/admin', { replace: true });
+        } else {
+          navigate('/dashboard', { replace: true });
+        }
+      } else {
+        setError('Invalid email or password');
+        toast.error('Login failed', {
+          description: 'Invalid email or password',
+        });
+      }
+    } catch (err) {
+      setError('An error occurred during login');
+      toast.error('Login error');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSSOLogin = () => {
-    // Mock SSO login
-    navigate('/dashboard');
+    // Mock SSO login - use admin credentials
+    const user = authService.login({
+      email: 'arry@university.edu',
+      password: 'admin123',
+    });
+    if (user) {
+      toast.success('SSO login successful');
+      navigate(user.role === 'admin' ? '/admin' : '/dashboard', { replace: true });
+    }
+  };
+
+  const handleDemoLogin = (role: 'admin' | 'student' | 'lecturer') => {
+    const credentials = {
+      admin: { email: 'arry@university.edu', password: 'admin123' },
+      student: { email: 'jesse@university.edu', password: 'student123' },
+      lecturer: { email: 'panji@university.edu', password: 'lecturer123' },
+    };
+
+    const user = authService.login(credentials[role]);
+    if (user) {
+      toast.success(`Logged in as ${user.name}`);
+      navigate(role === 'admin' ? '/admin' : '/dashboard', { replace: true });
+    }
   };
 
   return (
@@ -32,7 +81,7 @@ export function LoginPage() {
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-4">
               <GraduationCap className="h-10 w-10 text-primary" />
             </div>
-            <h1 className="text-4xl font-bold text-primary mb-2">RoomifyU</h1>
+            <h1 className="text-4xl font-bold text-primary mb-2">CampusSpace</h1>
             <p className="text-xl text-muted-foreground">Sampoerna University Room Booking System</p>
           </div>
           <img
@@ -75,6 +124,11 @@ export function LoginPage() {
 
               {/* Email Login Form */}
               <form onSubmit={handleLogin} className="space-y-4 rounded-lg border bg-muted/30 p-4">
+                {error && (
+                  <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
+                    {error}
+                  </div>
+                )}
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -85,6 +139,7 @@ export function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     className="h-11 border-border bg-background shadow-sm"
                     required
+                    disabled={isLoading}
                   />
                 </div>
                 <div className="space-y-2">
@@ -107,15 +162,50 @@ export function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     className="h-11 border-border bg-background shadow-sm"
                     required
+                    disabled={isLoading}
                   />
                 </div>
-                <Button type="submit" className="w-full">
-                  Sign In
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? 'Signing in...' : 'Sign In'}
                 </Button>
                 <p className="text-xs text-muted-foreground">
-                  Example credentials are prefilled for demo login.
+                  Demo credentials: arry@university.edu / admin123 (or similar for other roles)
                 </p>
               </form>
+
+              {/* Quick Demo Login Buttons */}
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground text-center">Quick demo login:</p>
+                <div className="grid grid-cols-3 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDemoLogin('admin')}
+                    disabled={isLoading}
+                    className="text-xs"
+                  >
+                    Admin
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDemoLogin('student')}
+                    disabled={isLoading}
+                    className="text-xs"
+                  >
+                    Student
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDemoLogin('lecturer')}
+                    disabled={isLoading}
+                    className="text-xs"
+                  >
+                    Lecturer
+                  </Button>
+                </div>
+              </div>
 
               <p className="text-center text-sm text-muted-foreground">
                 Need help?{' '}

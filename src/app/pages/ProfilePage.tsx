@@ -6,11 +6,20 @@ import { Label } from '../components/ui/label';
 import { Avatar, AvatarFallback } from '../components/ui/avatar';
 import { Switch } from '../components/ui/switch';
 import { Separator } from '../components/ui/separator';
-import { currentUser } from '../data/mockData';
+import { authService } from '../utils/auth';
+import { useNavigate } from 'react-router';
 import { User, Bell, Lock, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 
 export function ProfilePage() {
+  const navigate = useNavigate();
+  const currentUser = authService.getCurrentUser();
+
+  if (!currentUser) {
+    navigate('/login', { replace: true });
+    return null;
+  }
+
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [bookingReminders, setBookingReminders] = useState(true);
   const [approvalNotifications, setApprovalNotifications] = useState(true);

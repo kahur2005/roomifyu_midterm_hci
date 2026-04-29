@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { BookingCard } from '../components/BookingCard';
-import { currentUser, bookings, rooms } from '../data/mockData';
+import { bookings, rooms } from '../data/mockData';
+import { authService } from '../utils/auth';
 import { Calendar, Clock, CheckCircle, Home } from 'lucide-react';
 import { Avatar, AvatarFallback } from '../components/ui/avatar';
 
 export function DashboardPage() {
   const navigate = useNavigate();
+  const currentUser = authService.getCurrentUser();
+
+  if (!currentUser) {
+    navigate('/login', { replace: true });
+    return null;
+  }
   
   // Get user's upcoming bookings
   const userBookings = bookings

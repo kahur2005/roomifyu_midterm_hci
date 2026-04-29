@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { rooms, buildings, allFacilities } from '../data/mockData';
+import { authService } from '../utils/auth';
+import { useNavigate } from 'react-router';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -33,6 +35,14 @@ import { toast } from 'sonner';
 import { Switch } from '../components/ui/switch';
 
 export function RoomManagementPage() {
+  const navigate = useNavigate();
+  const currentUser = authService.getCurrentUser();
+
+  if (!currentUser || currentUser.role !== 'admin') {
+    navigate('/dashboard', { replace: true });
+    return null;
+  }
+
   const [searchQuery, setSearchQuery] = useState('');
   const [buildingFilter, setBuildingFilter] = useState('All Buildings');
   const [showAddEditDialog, setShowAddEditDialog] = useState(false);

@@ -42,10 +42,18 @@ export function RoomDetailPage() {
 
   const timeSlots = generateTimeSlots();
   
-  // Mock availability data
-  const availability = timeSlots.map(time => ({
+  // Mock availability data (stable demo values, not fully random)
+  const availability = timeSlots.map((time, index) => ({
     time,
-    status: Math.random() > 0.3 ? 'available' : Math.random() > 0.5 ? 'booked' : 'pending'
+    status: room.isMaintenance
+      ? 'pending'
+      : !room.isAvailable
+      ? 'booked'
+      : index % 6 === 0
+      ? 'pending'
+      : index % 4 === 0
+      ? 'booked'
+      : 'available'
   }));
 
   const handleEquipmentToggle = (equipment: string) => {
@@ -376,10 +384,10 @@ export function RoomDetailPage() {
                 className="w-full"
                 size="lg"
                 onClick={() => setShowBookingModal(true)}
-                disabled={room.isMaintenance}
+                disabled={room.isMaintenance || !room.isAvailable}
               >
                 <CalendarIcon className="h-5 w-5 mr-2" />
-                {room.isMaintenance ? 'Under Maintenance' : 'Book Now'}
+                {room.isMaintenance ? 'Under Maintenance' : !room.isAvailable ? 'Not Available' : 'Book Now'}
               </Button>
               
               <div className="text-sm space-y-2">

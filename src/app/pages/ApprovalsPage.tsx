@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { bookings } from '../data/mockData';
+import { authService } from '../utils/auth';
+import { useNavigate } from 'react-router';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { StatusBadge } from '../components/StatusBadge';
@@ -39,6 +41,14 @@ import { Search, CheckCircle, XCircle, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 
 export function ApprovalsPage() {
+  const navigate = useNavigate();
+  const currentUser = authService.getCurrentUser();
+
+  if (!currentUser || currentUser.role !== 'admin') {
+    navigate('/dashboard', { replace: true });
+    return null;
+  }
+
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedBooking, setSelectedBooking] = useState<typeof bookings[0] | null>(null);
